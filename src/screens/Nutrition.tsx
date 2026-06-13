@@ -4,6 +4,7 @@ import { Ring } from '../components/Ring'
 import { analyzeFood } from '../lib/anthropic'
 import { prepareImage } from '../lib/image'
 import { todayStr } from '../lib/util'
+import { FOOD_PRESETS } from '../lib/foods'
 import type { FoodAnalysis } from '../types'
 
 export function Nutrition({ toast }: { toast: (m: string) => void }) {
@@ -16,8 +17,9 @@ export function Nutrition({ toast }: { toast: (m: string) => void }) {
 
   const fileRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
-  const [pending, setPending] = useState<{ food: FoodAnalysis; thumb: string } | null>(null)
+  const [pending, setPending] = useState<{ food: FoodAnalysis; thumb?: string } | null>(null)
   const [err, setErr] = useState<string | null>(null)
+  const [manual, setManual] = useState(false)
 
   const totals = meals.reduce(
     (acc, m) => ({
@@ -97,20 +99,40 @@ export function Nutrition({ toast }: { toast: (m: string) => void }) {
         onChange={onPick}
       />
 
-      {!pending && (
-        <button className="btn" onClick={() => fileRef.current?.click()} disabled={loading}>
-          {loading ? <span className="spinner" /> : '📷'}
-          {loading ? 'AI analiz ediyor…' : 'Yemek fotografi cek / yukle'}
-        </button>
+      {!pending && !manual && (
+        <div className="row">
+          <button className="btn" onClick={() => fileRef.current?.click()} disabled={loading}>
+            {loading ? <span className="spinner" /> : '📷'}
+            {loading ? 'AI analiz ediyor…' : 'Fotograf'}
+          </button>
+          <button className="btn ghost" onClick={() => setManual(true)} disabled={loading}>
+            ✏️ Manuel
+          </button>
+        </div>
       )}
 
       {err && <div className="muted" style={{ color: '#c0392b', marginTop: 10 }}>{err}</div>}
+
+      {manual && !pending && (
+        <ManualMeal
+          onCancel={() => setManual(false)}
+          onSave={(food) => {
+            addMeal(date, food)
+            toast(`${food.name} eklendi · ${food.calories} kcal`)
+            setManual(false)
+          }}
+        />
+      )}
 
       {pending && (
         <div className="card" style={{ marginTop: 14 }}>
           <div className="card-title">AI analizi</div>
           <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-            <img className="thumb" src={pending.thumb} style={{ width: 72, height: 72 }} />
+            {pending.thumb ? (
+              <img className="thumb" src={pending.thumb} style={{ width: 72, height: 72 }} />
+            ) : (
+              <div className="thumb" style={{ width: 72, height: 72, fontSize: 30 }}>🍽️</div>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: 17 }}>{pending.food.name}</div>
               <div className="muted">{pending.food.items.join(', ')}</div>
@@ -193,6 +215,99 @@ function Macro({
           <span style={{ width: `${pct * 100}%`, background: color }} />
         </div>
       )}
+    </div>
+  )
+}
+
+function ManualMeal({
+  onSave,
+  onCancel
+}: {
+  onSave: (food: FoodAnalysis) => void
+  onCancel: () => void
+}) {
+  const [name, setName] = useState('')
+  const [cal, setCal] = useState('')
+  const [p, setP] = useState('')
+  const [c, setC] = useState('')
+  const [f, setF] = useState('')
+
+  function fillPreset(presetName: string) {
+    const preset = FOOD_PRESETS.find((x) => x.name === presetName)
+    if (!preset) return
+    setName(preset.name)
+    setCal(String(preset.calories))
+    setP(String(preset.protein))
+    setC(String(preset.carbs))
+    setF(String(preset.fat))
+  }
+
+  function save() {
+    if (!name.trim() || !cal) return
+    onSave({
+      name: name.trim(),
+      calories: Number(cal) || 0,
+      protein: Number(p) || 0,
+      carbs: Number(c) || 0,
+      fat: Number(f) || 0,
+      items: [name.trim()]
+    })
+  }
+
+  return (
+    <div className="card" style={{ marginTop: 14 }}>
+      <div className="card-title">Manuel ogun ekle</div>
+      <div className="muted" style={{ marginBottom: 10 }}>
+        Hazir bir yemek sec ya da kendin doldur (API gerekmez):
+      </div>
+      <div className="chips" style={{ marginBottom: 14 }}>
+        {FOOD_PRESETS.map((x) => (
+          <button key={x.name} className="chip" onClick={() => fillPreset(x.name)}>
+            {x.emoji} {x.name.replace(/ \(.*\)/, '')}
+          </button>
+        ))}
+      </div>
+      <div className="field">
+        <input
+          className="input"
+          placeholder="Yemek adi"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+      <div className="field">
+        <label>Kalori (kcal)</label>
+        <input
+          className="input"
+          type="number"
+          inputMode="numeric"
+          placeholder="or. 450"
+          value={cal}
+          onChange={(e) => setCal(e.target.value)}
+        />
+      </div>
+      <div className="row">
+        <div className="field">
+          <label>Protein (g)</label>
+          <input className="input" type="number" value={p} onChange={(e) => setP(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>Karb (g)</label>
+          <input className="input" type="number" value={c} onChange={(e) => setC(e.target.value)} />
+        </div>
+        <div className="field">
+          <label>Yag (g)</label>
+          <input className="input" type="number" value={f} onChange={(e) => setF(e.target.value)} />
+        </div>
+      </div>
+      <div className="row" style={{ marginTop: 4 }}>
+        <button className="btn ghost" onClick={onCancel}>
+          Iptal
+        </button>
+        <button className="btn" onClick={save} disabled={!name.trim() || !cal}>
+          Ekle
+        </button>
+      </div>
     </div>
   )
 }

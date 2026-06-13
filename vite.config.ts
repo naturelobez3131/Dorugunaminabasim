@@ -19,6 +19,7 @@ export default defineConfig({
       manifest: {
         name: 'Gunluk Aktivite AI',
         short_name: 'AktiviteAI',
+        lang: 'tr',
         description: 'AI ile gunluk planlama, puan, rank ve kalori takibi',
         theme_color: '#F6F6F4',
         background_color: '#F6F6F4',

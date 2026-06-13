@@ -73,5 +73,19 @@ await shot('3-kalori')
 await clickTab(3)
 await shot('4-profil')
 
+// Kalori sekmesinde manuel ekleme panelini ac
+await clickTab(2)
+const btns = await page.$$('.btn')
+// "Manuel" butonu (ghost) — metnine gore bul
+for (const b of btns) {
+  const t = await page.evaluate((el) => el.textContent, b)
+  if (t && t.includes('Manuel')) {
+    await b.click()
+    break
+  }
+}
+await new Promise((r) => setTimeout(r, 500))
+await shot('5-manuel-kalori')
+
 await browser.close()
 console.log('done; tabs:', tabs.length)

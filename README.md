@@ -9,7 +9,7 @@ Cal AI tarzinda **acik tonlu, sade ve temiz** bir arayuz.
 - **AI ile gunu planlama** — Gununu kisaca anlat ("sabah spor, gunduz ofis, aksam ders"), AI tum gunu saatli bir zaman cizelgesine donustursun. Istersen her seyi manuel de ekleyebilirsin.
 - **Puan kasma** — Yapilan aktiviteleri tikledikce kategoriye gore puan kazanirsin (spor 30, ogrenme 25, is 20…). Gun serisi (streak) takibi.
 - **Rank sistemi** — Bronz → Gumus → Altin → Platin → Elmas → Usta → Efsane. Puan arttikca rank yukselir.
-- **AI kalori & diyet** — Yemegin fotografini cek, AI kalori ve makrolari (protein/karb/yag) tahmin etsin. Gunluk kalori hedefine gore ilerleme.
+- **Kalori & diyet** — Iki yol: (1) **Manuel** — hazir yemek listesinden sec ya da kalori/makro gir (API gerekmez); (2) **AI fotograf** — yemegin fotografini cek, AI kalori ve makrolari tahmin etsin. Gunluk kalori hedefine gore ilerleme.
 - **Bildirimler** — Saati yaklasan aktivite icin kilit ekraninda hatirlatma.
 - **PWA** — Cevrimdisi acilir, ana ekrana yuklenir, mobil + masaustu.
 
