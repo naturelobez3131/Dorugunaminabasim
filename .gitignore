@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.env
+.env.*
+!.env.example
+dev-dist
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Local preview/screenshot artifacts
+preview.log
+shots/
