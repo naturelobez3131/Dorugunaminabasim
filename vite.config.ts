@@ -4,7 +4,13 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // PWA: tek kod tabaniyla telefon (Android/iPhone) + PC + tarayicida calisir.
 // Kullanici "Ana ekrana ekle" ile uygulamayi yukleyebilir.
+//
+// BASE_PATH: GitHub Pages proje sayfasi alt-yolda yayinlanir
+// (or. /Dorugunaminabasim/). CI bu env'i ayarlar; yerelde '/' kalir.
+const base = process.env.BASE_PATH || '/'
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
@@ -18,7 +24,8 @@ export default defineConfig({
         background_color: '#F6F6F4',
         display: 'standalone',
         orientation: 'portrait',
-        start_url: '/',
+        start_url: base,
+        scope: base,
         icons: [
           { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
@@ -28,7 +35,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-        navigateFallback: '/index.html'
+        navigateFallback: base + 'index.html'
       },
       devOptions: { enabled: true }
     })

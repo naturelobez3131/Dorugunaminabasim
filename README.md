@@ -40,6 +40,26 @@ AI ozellikleri Claude API kullanir:
 - **Planlama**: metin → yapilandirilmis gunluk plan (JSON schema ile garantili).
 - **Yemek analizi**: fotograf (vision) → kalori + makrolar.
 
+## Yayina alma (GitHub Pages)
+
+Repo'ya push edildiginde `.github/workflows/deploy.yml` uygulamayi otomatik
+derleyip GitHub Pages'e yayinlar.
+
+**Yayin adresi:** https://naturelobez3131.github.io/Dorugunaminabasim/
+
+Ilk yayinda Pages'in etkin olmasi gerekir. Workflow `actions/configure-pages`
+ile bunu otomatik dener; eger izin yoksa GitHub'da bir kez:
+**Settings → Pages → Build and deployment → Source: GitHub Actions** secilir.
+Sonraki her push otomatik gunceller. Telefonda bu adresi acip "Ana ekrana ekle"
+ile PWA olarak yukleyebilirsin.
+
+### Alternatif: Vercel / Netlify
+
+- **Vercel**: Projeyi import et, framework "Vite", build `npm run build`, output `dist`.
+- **Netlify**: Build `npm run build`, publish dizini `dist`.
+
+Bu platformlar kok dizinde (`/`) sunar; ekstra `BASE_PATH` gerekmez.
+
 ## Mimari
 
 ```
